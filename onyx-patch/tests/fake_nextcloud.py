@@ -25,11 +25,12 @@ def multistatus(rel: str) -> bytes:
     direct = [p for p in FILES if p.rsplit("/", 1)[0] == rel]
     folders = set()
     for path in FILES:
-        if path.startswith(rel + "/"):
-            rest = path[len(rel) + 1 :]
-            segment, _, more = rest.partition("/")
-            if more:
-                folders.add(f"{rel}/{segment}")
+        if rel and not path.startswith(rel + "/"):
+            continue
+        rest = path if not rel else path[len(rel) + 1 :]
+        segment, _, more = rest.partition("/")
+        if more:
+            folders.add(f"{rel}/{segment}" if rel else segment)
     parts = [
         '<?xml version="1.0"?><d:multistatus xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">'
     ]
@@ -66,6 +67,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_PROPFIND(self) -> None:
         rel = urllib.parse.unquote(self.path.split(NC_PREFIX, 1)[-1]).strip("/")
+        exists = rel == "" or any(path == rel or path.startswith(rel + "/") for path in FILES)
+        if not exists:
+            self._send(404, b"not found", "text/plain")
+            return
         self._send(207, multistatus(rel))
 
     def do_GET(self) -> None:

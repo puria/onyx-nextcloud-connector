@@ -98,6 +98,25 @@ class NextcloudConnector(LoadConnector, PollConnector):
     ) -> GenerateDocumentsOutput:
         yield from self._yield_documents(modified_since=start)
 
+    def validate_connector_settings(self) -> None:
+        """Verify the server URL, credentials and configured folders are usable.
+
+        Runs as Onyx's INDEXING capability check for this source (the UI shows
+        the result as "Connector settings validation").
+        """
+        client = self._require_client()
+        folders = self.folders or [""]
+        errors: list[str] = []
+        for folder in folders:
+            try:
+                client.list_folder(folder)
+            except NextcloudAuthError:
+                raise
+            except NextcloudError as exc:
+                errors.append(str(exc))
+        if errors:
+            raise NextcloudError("; ".join(errors))
+
     # ---------------------------------------------------------------- internals
 
     def _require_client(self) -> NextcloudWebDAVClient:
@@ -111,14 +130,15 @@ class NextcloudConnector(LoadConnector, PollConnector):
     def _yield_documents(self, modified_since: float | None) -> GenerateDocumentsOutput:
         client = self._require_client()
 
-        if not self.folders:
-            raise NextcloudError("No Nextcloud folders configured")
+        # No folders configured means "scan the whole account": walk from the
+        # WebDAV user root downwards.
+        roots = self.folders or [""]
 
-        files = client.walk(self.folders)
+        files = client.walk(roots)
         logger.info(
             "Nextcloud scan found %d supported file(s) in %s",
             len(files),
-            self.folders,
+            roots if self.folders else "the whole account",
         )
 
         max_bytes = self.max_file_size_mb * 1024 * 1024

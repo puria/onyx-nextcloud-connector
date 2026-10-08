@@ -23,6 +23,7 @@ import httpx
 # --- 1. registry / enum wiring -------------------------------------------------
 from onyx.configs.constants import DocumentSource
 from onyx.connectors.factory import identify_connector_class
+from onyx.connectors.nextcloud.client import NextcloudError
 from onyx.connectors.nextcloud.config import NextcloudConnectorConfig
 from onyx.connectors.nextcloud.connector import NextcloudConnector
 from onyx.connectors.registry import CONNECTOR_CLASS_MAP
@@ -92,11 +93,12 @@ def multistatus(folder: str) -> bytes:
     direct = [p for p in FILES if p.rsplit("/", 1)[0] == folder]
     folders = set()
     for path in FILES:
-        if path.startswith(folder + "/"):
-            rest = path[len(folder) + 1 :]
-            segment, _, more = rest.partition("/")
-            if more:
-                folders.add(f"{folder}/{segment}")
+        if folder and not path.startswith(folder + "/"):
+            continue
+        rest = path if not folder else path[len(folder) + 1 :]
+        segment, _, more = rest.partition("/")
+        if more:
+            folders.add(f"{folder}/{segment}" if folder else segment)
     parts = [
         '<?xml version="1.0"?><d:multistatus xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">'
     ]
@@ -126,6 +128,9 @@ def handler(request: httpx.Request) -> httpx.Response:
 
     rel = urllib.parse.unquote(rel)
     if request.method == "PROPFIND":
+        exists = rel == "" or any(path == rel or path.startswith(rel + "/") for path in FILES)
+        if not exists:
+            return httpx.Response(404)
         return httpx.Response(207, content=multistatus(rel))
     if request.method == "GET":
         entry = FILES.get(rel)
@@ -201,6 +206,35 @@ except Exception as exc:
     print("auth failure raises as intended:", type(exc).__name__)
 else:
     raise AssertionError("expected auth failure")
+
+# --- 5. validate_connector_settings + empty-folders = whole account ---------
+client_module.httpx.Client = lambda **kwargs: real_client(transport=httpx.MockTransport(handler))
+
+settings_connector = NextcloudConnector(folders=["Documents"], max_file_size_mb=1)
+settings_connector.load_credentials(
+    {"server_url": "https://cloud.test", "username": "me", "app_password": "app-password"}
+)
+settings_connector.validate_connector_settings()  # must not raise
+
+bad_folder = NextcloudConnector(folders=["DoesNotExist"], max_file_size_mb=1)
+bad_folder.load_credentials(
+    {"server_url": "https://cloud.test", "username": "me", "app_password": "app-password"}
+)
+try:
+    bad_folder.validate_connector_settings()
+except NextcloudError:
+    print("validate_connector_settings reports a missing folder as intended")
+else:
+    raise AssertionError("expected validation failure for a missing folder")
+
+empty_folders = NextcloudConnector(folders=[], max_file_size_mb=1)
+empty_folders.load_credentials(
+    {"server_url": "https://cloud.test", "username": "me", "app_password": "app-password"}
+)
+whole_account = [doc for batch in empty_folders.load_from_state() for doc in batch]
+names = sorted(d.semantic_identifier for d in whole_account)
+assert names == ["deep.md", "note.md", "paper.pdf", "report.txt", "word.docx"], names
+print("empty folders OK: indexes the whole account")
 
 print("ALL CONNECTOR CHECKS PASSED")
 sys.exit(0)

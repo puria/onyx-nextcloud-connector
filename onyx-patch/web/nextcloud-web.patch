@@ -153,10 +153,55 @@ index fd75685..b6c833c 100644
            "description": "课程、页面和公告"
          },
 diff --git a/web/src/lib/connectors/connectors.tsx b/web/src/lib/connectors/connectors.tsx
-index a5f795a..b2a2b4f 100644
+index a5f795a..800d4e6 100644
 --- a/web/src/lib/connectors/connectors.tsx
 +++ b/web/src/lib/connectors/connectors.tsx
-@@ -1669,6 +1669,36 @@ For example, specifying .*-alerts as a "channel to exclude" will cause the conne
+@@ -48,7 +48,7 @@ const ONE_DRIVE_TRANSLATION_KEYS: OneDriveConfigurationText = {
+ };
+ 
+ function buildOneDriveConfiguration(
+-  text: OneDriveConfigurationText
++  text: OneDriveConfigurationText,
+ ): ConnectionConfiguration {
+   return {
+     description: text.description,
+@@ -128,7 +128,7 @@ function buildOneDriveConfiguration(
+ }
+ 
+ export function useConnectorConfiguration(
+-  connector: ConfigurableSources
++  connector: ConfigurableSources,
+ ): ConnectionConfiguration {
+   const t = useTranslations("admin.connectorsList.oneDrive");
+ 
+@@ -160,7 +160,7 @@ export function useConnectorConfiguration(
+ // the convention, including how to pick the default.
+ export function buildIncludeAttachmentsOption(
+   defaultValue: boolean,
+-  description: string = "Enable processing of page attachments including images and documents"
++  description: string = "Enable processing of page attachments including images and documents",
+ ): BooleanOption {
+   return {
+     type: "checkbox",
+@@ -1070,7 +1070,7 @@ export const connectorConfigs: Record<
+           "credential, Files.Read.All or Sites.Read.All on Graph, and " +
+           "Sites.FullControl.All on the SharePoint API to read each file's " +
+           "readers. With Sites.Selected, grant the app full control on each " +
+-          "channel site."
++          "channel site.",
+       ),
+       {
+         type: "checkbox",
+@@ -1167,7 +1167,7 @@ export const connectorConfigs: Record<
+       },
+       buildIncludeAttachmentsOption(
+         false,
+-        "Index the text of file attachments. Inline images, nested items and cloud links are skipped."
++        "Index the text of file attachments. Inline images, nested items and cloud links are skipped.",
+       ),
+       {
+         type: "checkbox",
+@@ -1669,6 +1669,38 @@ For example, specifying .*-alerts as a "channel to exclude" will cause the conne
      values: [],
      advanced_values: [],
    },
@@ -165,12 +210,12 @@ index a5f795a..b2a2b4f 100644
 +    values: [
 +      {
 +        type: "list",
-+        query: "Enter the Nextcloud folders to index:",
++        query: "Nextcloud folders to index (optional):",
 +        label: "Folders",
 +        name: "folders",
-+        optional: false,
++        optional: true,
 +        description:
-+          "Folders relative to your Nextcloud root (e.g. 'Documents' or 'Projects/Notes'). Subfolders are included.",
++          "Leave empty to index your whole Nextcloud account. To limit it, list folders relative to your Nextcloud root, e.g. 'Documents' or 'Projects/Notes' — subfolders are always included.",
 +      },
 +    ],
 +    advanced_values: [
@@ -180,6 +225,7 @@ index a5f795a..b2a2b4f 100644
 +        label: "Verify SSL",
 +        name: "verify_ssl",
 +        optional: true,
++        default: true,
 +      },
 +      {
 +        type: "number",
@@ -187,6 +233,7 @@ index a5f795a..b2a2b4f 100644
 +        label: "Max File Size (MB)",
 +        name: "max_file_size_mb",
 +        optional: true,
++        default: 25,
 +      },
 +    ],
 +  },

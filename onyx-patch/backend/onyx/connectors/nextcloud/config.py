@@ -11,8 +11,9 @@ from onyx.connectors.connector_config import ConnectorConfig
 
 
 class NextcloudConnectorConfig(ConnectorConfig):
-    # Folders relative to the WebDAV user root, e.g. ["Documents", "Projects/Notes"]
-    folders: list[str]
+    # Folders relative to the WebDAV user root, e.g. ["Documents", "Projects/Notes"].
+    # Empty means the whole account (every folder under the WebDAV root).
+    folders: list[str] = []
     verify_ssl: bool = True
     max_file_size_mb: int = 25
     batch_size: int = INDEX_BATCH_SIZE
