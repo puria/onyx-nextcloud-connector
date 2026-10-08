@@ -82,7 +82,7 @@ echo
 
 echo "checking current repository merge settings..."
 gh repo view "$REPO_FULL_NAME" \
-  --json allowMergeCommit,allowRebaseMerge,allowSquashMerge,deleteBranchOnMerge \
+  --json mergeCommitAllowed,rebaseMergeAllowed,squashMergeAllowed,deleteBranchOnMerge \
   --jq .
 
 echo
@@ -172,7 +172,7 @@ echo
 
 echo "verifying repository merge settings..."
 gh repo view "$REPO_FULL_NAME" \
-  --json allowMergeCommit,allowRebaseMerge,allowSquashMerge,deleteBranchOnMerge \
+  --json mergeCommitAllowed,rebaseMergeAllowed,squashMergeAllowed,deleteBranchOnMerge \
   --jq .
 
 echo
