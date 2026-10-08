@@ -46,6 +46,8 @@ The web patch only adds new code plus small edits at existing extension points
 - The scan **streams**: batches are handed to Onyx as folders are listed, so
   indexing progress is visible immediately even on large accounts.
 - Stable document IDs `nc-<instance-hash>-<fileid>`; `oc:fileid` survives renames/moves.
+- Nextcloud may send the same ETag as strong in PROPFIND and weak (`W/`) in GET;
+  both forms are normalized before mid-download change detection.
 - Text extracted by Onyx's own `extract_text_and_images` (PDF/DOCX/TXT/MD).
 - Files that change between scan and download are re-fetched (3 attempts), then the
   indexing attempt fails rather than indexing a mismatched version.

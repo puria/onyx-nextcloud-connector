@@ -71,6 +71,21 @@ def quote_path(path: str) -> str:
     return "/".join(urllib.parse.quote(part) for part in path.split("/") if part)
 
 
+def normalize_etag(value: str) -> str:
+    """Return the opaque ETag, treating HTTP weak/strong forms equivalently.
+
+    Nextcloud may return a strong quoted ETag in PROPFIND and the same value
+    prefixed by ``W/`` in GET. The weak marker and quotes are representation,
+    not a file-content change.
+    """
+    tag = value.strip()
+    if tag.startswith("W/"):
+        tag = tag[2:].strip()
+    if len(tag) >= 2 and tag.startswith('"') and tag.endswith('"'):
+        tag = tag[1:-1]
+    return tag
+
+
 def parse_http_date(value: str) -> float:
     """HTTP-date to POSIX timestamp; 0.0 when unparseable."""
     try:
@@ -201,7 +216,7 @@ class NextcloudWebDAVClient:
             raise NextcloudError(
                 f"Download of '{file.path}' failed with HTTP {response.status_code}"
             )
-        served_etag = (response.headers.get("ETag") or "").strip('"')
+        served_etag = normalize_etag(response.headers.get("ETag") or "")
         content = response.content
         if len(content) > max_bytes:
             raise NextcloudError(
@@ -243,7 +258,7 @@ def parse_propfind(
             continue
 
         file_id = properties.findtext(f"{{{OC_NS}}}fileid")
-        etag = (properties.findtext(f"{{{DAV_NS}}}getetag") or "").strip('"')
+        etag = normalize_etag(properties.findtext(f"{{{DAV_NS}}}getetag") or "")
         if not file_id or not etag:
             logger.debug("Skipping entry without file id or ETag: %s", relative)
             continue

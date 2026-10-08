@@ -65,6 +65,16 @@ def quote_path(path: str) -> str:
     return "/".join(urllib.parse.quote(part) for part in path.split("/"))
 
 
+def normalize_etag(value: str) -> str:
+    """Normalize strong and weak HTTP ETag representations to the opaque tag."""
+    tag = value.strip()
+    if tag.startswith("W/"):
+        tag = tag[2:].strip()
+    if len(tag) >= 2 and tag.startswith('"') and tag.endswith('"'):
+        tag = tag[1:-1]
+    return tag
+
+
 def _http_date_to_utc(value: str) -> str:
     try:
         dt = parsedate_to_datetime(value)
@@ -172,7 +182,7 @@ class NextcloudClient:
             raise NextcloudError(
                 f"Download of {scanned.path!r} failed with HTTP {response.status_code}"
             )
-        response_etag = (response.headers.get("ETag") or "").strip('"')
+        response_etag = normalize_etag(response.headers.get("ETag") or "")
         temp = tempfile.NamedTemporaryFile(prefix="nc-onyx-", suffix=".download", delete=False)
         total = 0
         try:
@@ -226,7 +236,7 @@ def parse_propfind(xml_text: str, folder: str, dav_root: str) -> list[ScannedFil
                 results.append(rel.rstrip("/"))
             continue
         fileid = props.findtext(f"{{{OC}}}fileid")
-        etag = (props.findtext(f"{{{DAV}}}getetag") or "").strip('"')
+        etag = normalize_etag(props.findtext(f"{{{DAV}}}getetag") or "")
         if not fileid or not etag:
             continue
         size_text = props.findtext(f"{{{DAV}}}getcontentlength") or "0"

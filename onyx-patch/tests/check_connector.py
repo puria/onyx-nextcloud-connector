@@ -23,11 +23,12 @@ import httpx
 # --- 1. registry / enum wiring -------------------------------------------------
 from onyx.configs.constants import DocumentSource
 from onyx.connectors.factory import identify_connector_class
-from onyx.connectors.nextcloud.client import NextcloudError
+from onyx.connectors.nextcloud.client import NextcloudError, normalize_etag
 from onyx.connectors.nextcloud.config import NextcloudConnectorConfig
 from onyx.connectors.nextcloud.connector import NextcloudConnector
 from onyx.connectors.registry import CONNECTOR_CLASS_MAP
 
+assert normalize_etag('"same"') == normalize_etag('W/"same"') == "same"
 # Onyx's extractor consults the key-value store (DB) for the optional
 # Unstructured API key, so the SQL engine must be initialized as it is in the
 # real indexing worker.
@@ -137,7 +138,7 @@ def handler(request: httpx.Request) -> httpx.Response:
         if entry is None:
             return httpx.Response(404)
         etag = etag_override.get(rel, entry["etag"])
-        return httpx.Response(200, content=entry["content"], headers={"ETag": f'"{etag}"'})
+        return httpx.Response(200, content=entry["content"], headers={"ETag": f'W/"{etag}"'})
     return httpx.Response(405)
 
 

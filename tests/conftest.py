@@ -71,7 +71,11 @@ class FakeNextcloud:
                     return httpx.Response(404, text="gone")
                 entry = self.files[rel]
                 etag = self.etag_override.get(rel, entry["etag"])
-                return httpx.Response(200, content=entry["content"], headers={"ETag": f'"{etag}"'})
+                return httpx.Response(
+                    200,
+                    content=entry["content"],
+                    headers={"ETag": f'W/"{etag}"'},
+                )
             return httpx.Response(405)
 
         return httpx.MockTransport(handler)
