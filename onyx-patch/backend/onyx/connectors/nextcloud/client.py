@@ -9,6 +9,7 @@ from __future__ import annotations
 import os
 import time
 import urllib.parse
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from datetime import UTC
 from email.utils import parsedate_to_datetime
@@ -156,9 +157,14 @@ class NextcloudWebDAVClient:
             )
         return parse_propfind(response.text, folder, self._dav_root)
 
-    def walk(self, folders: list[str]) -> list[NextcloudFile]:
-        """Recursively collect supported files from the configured folders."""
-        collected: list[NextcloudFile] = []
+    def iter_files(self, folders: Iterable[str]) -> Iterator[NextcloudFile]:
+        """Recursively yield supported files, folder by folder.
+
+        Streaming (rather than collecting everything first) keeps indexing
+        progress visible on large accounts: Onyx receives the first batch as
+        soon as the first folder has been listed.
+        """
+        folders_listed = 0
         for root in folders:
             queue = [root.strip("/")]
             visited: set[str] = set()
@@ -168,14 +174,20 @@ class NextcloudWebDAVClient:
                     continue
                 visited.add(folder)
                 files, subfolders = self.list_folder(folder)
+                folders_listed += 1
+                if folders_listed % 25 == 0:
+                    logger.info(
+                        "Nextcloud scan progress: %d folders listed, currently in '%s'",
+                        folders_listed,
+                        folder or "/",
+                    )
                 queue.extend(subfolders)
                 for candidate in files:
                     extension = os.path.splitext(candidate.path)[1].lower()
                     if extension in self.SUPPORTED_EXTENSIONS:
-                        collected.append(candidate)
+                        yield candidate
                     else:
                         logger.debug("Skipping unsupported file type: %s", candidate.path)
-        return sorted(collected, key=lambda f: f.path)
 
     def download(self, file: NextcloudFile, max_bytes: int) -> DownloadedFile:
         """Download a file, enforcing a size cap.

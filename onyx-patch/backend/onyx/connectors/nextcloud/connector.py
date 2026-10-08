@@ -134,17 +134,18 @@ class NextcloudConnector(LoadConnector, PollConnector):
         # WebDAV user root downwards.
         roots = self.folders or [""]
 
-        files = client.walk(roots)
         logger.info(
-            "Nextcloud scan found %d supported file(s) in %s",
-            len(files),
+            "Nextcloud scan starting in %s",
             roots if self.folders else "the whole account",
         )
 
         max_bytes = self.max_file_size_mb * 1024 * 1024
         batch: list[Document | HierarchyNode] = []
+        files_seen = 0
+        documents_yielded = 0
 
-        for file in files:
+        for file in client.iter_files(roots):
+            files_seen += 1
             if (
                 modified_since is not None
                 and file.modified_at
@@ -167,8 +168,19 @@ class NextcloudConnector(LoadConnector, PollConnector):
             batch.append(document)
             if len(batch) >= self.batch_size:
                 yield batch
+                documents_yielded += len(batch)
+                logger.info(
+                    "Nextcloud progress: %d document(s) yielded, %d file(s) seen",
+                    documents_yielded,
+                    files_seen,
+                )
                 batch = []
 
+        logger.info(
+            "Nextcloud scan finished: %d supported file(s) seen, %d document(s) in the last batch",
+            files_seen,
+            len(batch),
+        )
         if batch:
             yield batch
 

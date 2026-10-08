@@ -1,31 +1,21 @@
+diff --git a/web/public/Nextcloud.svg b/web/public/Nextcloud.svg
+new file mode 100644
+index 0000000..d68aca1
+--- /dev/null
++++ b/web/public/Nextcloud.svg
+@@ -0,0 +1 @@
++<svg width="256" height="128" version="1.1" viewBox="0 0 256 128" xmlns="http://www.w3.org/2000/svg"><path d="m128 7c-25.871 0-47.817 17.485-54.713 41.209-5.9795-12.461-18.642-21.209-33.287-21.209-20.304 0-37 16.696-37 37s16.696 37 37 37c14.645 0 27.308-8.7481 33.287-21.209 6.8957 23.724 28.842 41.209 54.713 41.209s47.817-17.485 54.713-41.209c5.9795 12.461 18.642 21.209 33.287 21.209 20.304 0 37-16.696 37-37s-16.696-37-37-37c-14.645 0-27.308 8.7481-33.287 21.209-6.8957-23.724-28.842-41.209-54.713-41.209zm0 22c19.46 0 35 15.54 35 35s-15.54 35-35 35-35-15.54-35-35 15.54-35 35-35zm-88 20c8.4146 0 15 6.5854 15 15s-6.5854 15-15 15-15-6.5854-15-15 6.5854-15 15-15zm176 0c8.4146 0 15 6.5854 15 15s-6.5854 15-15 15-15-6.5854-15-15 6.5854-15 15-15z" color="#000000" fill="#fff" style="-inkscape-stroke:none"/></svg>
 diff --git a/web/src/components/icons/icons.tsx b/web/src/components/icons/icons.tsx
-index de95c70..0578004 100644
+index de95c70..5f1d467 100644
 --- a/web/src/components/icons/icons.tsx
 +++ b/web/src/components/icons/icons.tsx
-@@ -249,3 +249,23 @@ export const S3Icon = createLogoIcon(s3Icon);
+@@ -249,3 +249,6 @@ export const S3Icon = createLogoIcon(s3Icon);
  export const ServiceNowIcon = createLogoIcon(serviceNowIcon);
  export const TrelloIcon = createLogoIcon(trelloIcon);
  export const ZAIIcon = createLogoIcon(zAIIcon);
 +
-+export const NextcloudIcon = ({
-+  size = 16,
-+  className = defaultTailwindCSS,
-+}: IconProps) => (
-+  <svg
-+    width={size}
-+    height={size}
-+    viewBox="0 0 24 24"
-+    fill="currentColor"
-+    className={className}
-+    aria-hidden="true"
-+  >
-+    {/* Simplified Nextcloud mark: three circles joined by a cloud body */}
-+    <circle cx="6.7" cy="16.4" r="3.5" />
-+    <circle cx="17.3" cy="16.4" r="3.5" />
-+    <circle cx="12" cy="7.2" r="4.1" />
-+    <rect x="4.6" y="14.7" width="14.8" height="3.6" rx="1.8" />
-+  </svg>
-+);
++
++export const NextcloudIcon = createLogoIcon("/Nextcloud.svg");
 diff --git a/web/src/i18n/messages/ar.json b/web/src/i18n/messages/ar.json
 index 0206022..33de01e 100644
 --- a/web/src/i18n/messages/ar.json
