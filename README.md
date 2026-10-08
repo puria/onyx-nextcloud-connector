@@ -80,6 +80,44 @@ docker compose run --rm bridge sync --once
 docker compose up -d   # daemon, SQLite persisted on the bridge-data volume
 ```
 
+### Connecting to a local Onyx (already running on `localhost:3000`)
+
+Run the bridge **on the host** (uv): set `ONYX_URL=http://localhost:3000/api`.
+
+Run the bridge **in a container**, which cannot see the host's `localhost` — attach it to
+Onyx's Compose network and use the nginx service name:
+
+```yaml
+services:
+  bridge:
+    build: .
+    env_file: .env
+    environment:
+      STATE_PATH: /data/state.db
+    volumes:
+      - bridge-data:/data
+    restart: unless-stopped
+    command: ["sync", "--daemon"]
+    networks: [onyx]
+
+networks:
+  onyx:
+    external: true
+    name: onyx_default # <compose project>_default
+```
+
+Then set `ONYX_URL=http://nginx/api` (nginx proxies `/api` to the Onyx API server).
+Alternatively keep `ONYX_URL=http://host.docker.internal:3000/api` and add
+`extra_hosts: ["host.docker.internal:host-gateway"]`.
+
+The API key must be able to manage connectors: create a **service account** in
+_Admin Panel → Service Accounts_ and assign it the **Admin** group (or, on Enterprise,
+a group with _Manage Connectors & Document Sets_). Verify with:
+
+```sh
+curl -H "Authorization: Bearer $ONYX_API_KEY" http://localhost:3000/api/me/permissions
+```
+
 ### Modes
 
 - `sync --once` — one full pass (default).
