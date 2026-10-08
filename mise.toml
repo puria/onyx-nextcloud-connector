@@ -1,16 +1,30 @@
 [tools]
-go = "1.26.2"
+python = "3.12"
 node = "latest"
+uv = "latest"
 taplo = "latest"
 
 [tasks.format]
 run = """
-npx --yes prettier --write AGENTS.md PURIA.md '.puria/**/*.md'
+npx --yes prettier --write AGENTS.md PURIA.md '.puria/**/*.md' README.md
 taplo format mise.toml
+uv run ruff format .
 """
 
 [tasks.lint]
-depends = ["lint:design"]
+depends = ["lint:design", "lint:code"]
 
 [tasks."lint:design"]
 run = "if [ -f .puria/design/DESIGN.md ]; then npx --yes @google/design.md lint .puria/design/DESIGN.md; fi"
+
+[tasks."lint:code"]
+run = "uv run ruff check ."
+
+[tasks.test]
+run = "uv run pytest -q"
+
+[tasks.run]
+run = "uv run onyx-nextcloud-connector sync --once"
+
+[tasks.build]
+run = "docker build -t onyx-nextcloud-connector ."

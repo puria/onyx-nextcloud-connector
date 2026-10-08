@@ -1,0 +1,1104 @@
+diff --git a/web/public/Nextcloud.svg b/web/public/Nextcloud.svg
+new file mode 100644
+index 0000000..d68aca1
+--- /dev/null
++++ b/web/public/Nextcloud.svg
+@@ -0,0 +1 @@
++<svg width="256" height="128" version="1.1" viewBox="0 0 256 128" xmlns="http://www.w3.org/2000/svg"><path d="m128 7c-25.871 0-47.817 17.485-54.713 41.209-5.9795-12.461-18.642-21.209-33.287-21.209-20.304 0-37 16.696-37 37s16.696 37 37 37c14.645 0 27.308-8.7481 33.287-21.209 6.8957 23.724 28.842 41.209 54.713 41.209s47.817-17.485 54.713-41.209c5.9795 12.461 18.642 21.209 33.287 21.209 20.304 0 37-16.696 37-37s-16.696-37-37-37c-14.645 0-27.308 8.7481-33.287 21.209-6.8957-23.724-28.842-41.209-54.713-41.209zm0 22c19.46 0 35 15.54 35 35s-15.54 35-35 35-35-15.54-35-35 15.54-35 35-35zm-88 20c8.4146 0 15 6.5854 15 15s-6.5854 15-15 15-15-6.5854-15-15 6.5854-15 15-15zm176 0c8.4146 0 15 6.5854 15 15s-6.5854 15-15 15-15-6.5854-15-15 6.5854-15 15-15z" color="#000000" fill="#fff" style="-inkscape-stroke:none"/></svg>
+diff --git a/web/src/components/icons/icons.tsx b/web/src/components/icons/icons.tsx
+index de95c70..5f1d467 100644
+--- a/web/src/components/icons/icons.tsx
++++ b/web/src/components/icons/icons.tsx
+@@ -249,3 +249,6 @@ export const S3Icon = createLogoIcon(s3Icon);
+ export const ServiceNowIcon = createLogoIcon(serviceNowIcon);
+ export const TrelloIcon = createLogoIcon(trelloIcon);
+ export const ZAIIcon = createLogoIcon(zAIIcon);
++
++
++export const NextcloudIcon = createLogoIcon("/Nextcloud.svg");
+diff --git a/web/src/i18n/messages/ar.json b/web/src/i18n/messages/ar.json
+index 0206022..317c9c7 100644
+--- a/web/src/i18n/messages/ar.json
++++ b/web/src/i18n/messages/ar.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "صفحات الشبكة الداخلية والمجتمعات"
+         },
++        "nextcloud": {
++          "description": "الملفات والمستندات المخزنة في Nextcloud"
++        },
+         "canvas": {
+           "description": "الدورات والصفحات والإعلانات"
+         },
+@@ -2936,6 +2939,35 @@
+         "empty": {
+           "label": "لا توجد تبويبات لعرضها."
+         }
++      },
++      "folderPicker": {
++        "needsCredential": {
++          "label": "أنشئ بيانات الاعتماد أولاً، ثم تصفح المجلدات."
++        },
++        "browseButton": {
++          "label": "تصفح المجلدات"
++        },
++        "refreshButton": {
++          "label": "تحديث"
++        },
++        "addCurrentButton": {
++          "label": "فهرسة هذا المجلد"
++        },
++        "loading": {
++          "label": "جارٍ التحميل…"
++        },
++        "errorPrefix": {
++          "label": "خطأ:"
++        },
++        "upButton": {
++          "label": "↩ مستوى أعلى"
++        },
++        "selectButton": {
++          "label": "تحديد"
++        },
++        "empty": {
++          "label": "لا توجد مجلدات فرعية هنا."
++        }
+       }
+     },
+     "costOverrides": {
+diff --git a/web/src/i18n/messages/de.json b/web/src/i18n/messages/de.json
+index f4d5f47..43fa85b 100644
+--- a/web/src/i18n/messages/de.json
++++ b/web/src/i18n/messages/de.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Intranet-Seiten und Communities"
+         },
++        "nextcloud": {
++          "description": "In Nextcloud gespeicherte Dateien und Dokumente"
++        },
+         "canvas": {
+           "description": "Kurse, Seiten und Ankündigungen"
+         },
+@@ -2936,6 +2939,35 @@
+         "empty": {
+           "label": "Keine Tabs zum Anzeigen."
+         }
++      },
++      "folderPicker": {
++        "needsCredential": {
++          "label": "Legen Sie zuerst die Zugangsdaten an, dann können Sie Ordner durchsuchen."
++        },
++        "browseButton": {
++          "label": "Ordner durchsuchen"
++        },
++        "refreshButton": {
++          "label": "Aktualisieren"
++        },
++        "addCurrentButton": {
++          "label": "Diesen Ordner indexieren"
++        },
++        "loading": {
++          "label": "lädt…"
++        },
++        "errorPrefix": {
++          "label": "Fehler:"
++        },
++        "upButton": {
++          "label": "↩ eine Ebene höher"
++        },
++        "selectButton": {
++          "label": "auswählen"
++        },
++        "empty": {
++          "label": "Keine Unterordner hier."
++        }
+       }
+     },
+     "costOverrides": {
+diff --git a/web/src/i18n/messages/en.json b/web/src/i18n/messages/en.json
+index 76c2d70..c2694f2 100644
+--- a/web/src/i18n/messages/en.json
++++ b/web/src/i18n/messages/en.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Intranet pages & communities"
+         },
++        "nextcloud": {
++          "description": "Files and documents stored in Nextcloud"
++        },
+         "canvas": {
+           "description": "Courses, pages, & announcements"
+         },
+@@ -2936,6 +2939,35 @@
+         "empty": {
+           "label": "No tabs to display."
+         }
++      },
++      "folderPicker": {
++        "needsCredential": {
++          "label": "Create the credential first, then browse folders."
++        },
++        "browseButton": {
++          "label": "Browse folders"
++        },
++        "refreshButton": {
++          "label": "Refresh"
++        },
++        "addCurrentButton": {
++          "label": "Index this folder"
++        },
++        "loading": {
++          "label": "loading…"
++        },
++        "errorPrefix": {
++          "label": "Error:"
++        },
++        "upButton": {
++          "label": "↩ up one level"
++        },
++        "selectButton": {
++          "label": "select"
++        },
++        "empty": {
++          "label": "No subfolders here."
++        }
+       }
+     },
+     "costOverrides": {
+diff --git a/web/src/i18n/messages/es.json b/web/src/i18n/messages/es.json
+index 2ea6e9c..1e960a0 100644
+--- a/web/src/i18n/messages/es.json
++++ b/web/src/i18n/messages/es.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Páginas y comunidades de la intranet"
+         },
++        "nextcloud": {
++          "description": "Archivos y documentos almacenados en Nextcloud"
++        },
+         "canvas": {
+           "description": "Cursos, páginas y anuncios"
+         },
+@@ -2936,6 +2939,35 @@
+         "empty": {
+           "label": "No hay pestañas que mostrar."
+         }
++      },
++      "folderPicker": {
++        "needsCredential": {
++          "label": "Cree primero la credencial y luego explore las carpetas."
++        },
++        "browseButton": {
++          "label": "Explorar carpetas"
++        },
++        "refreshButton": {
++          "label": "Actualizar"
++        },
++        "addCurrentButton": {
++          "label": "Indexar esta carpeta"
++        },
++        "loading": {
++          "label": "cargando…"
++        },
++        "errorPrefix": {
++          "label": "Error:"
++        },
++        "upButton": {
++          "label": "↩ subir un nivel"
++        },
++        "selectButton": {
++          "label": "seleccionar"
++        },
++        "empty": {
++          "label": "No hay subcarpetas aquí."
++        }
+       }
+     },
+     "costOverrides": {
+diff --git a/web/src/i18n/messages/fr.json b/web/src/i18n/messages/fr.json
+index 0f12f24..8586ed5 100644
+--- a/web/src/i18n/messages/fr.json
++++ b/web/src/i18n/messages/fr.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Pages et communautés de l'intranet"
+         },
++        "nextcloud": {
++          "description": "Fichiers et documents stockés dans Nextcloud"
++        },
+         "canvas": {
+           "description": "Cours, pages et annonces"
+         },
+@@ -2936,6 +2939,35 @@
+         "empty": {
+           "label": "Aucun onglet à afficher."
+         }
++      },
++      "folderPicker": {
++        "needsCredential": {
++          "label": "Créez d'abord les identifiants, puis parcourez les dossiers."
++        },
++        "browseButton": {
++          "label": "Parcourir les dossiers"
++        },
++        "refreshButton": {
++          "label": "Actualiser"
++        },
++        "addCurrentButton": {
++          "label": "Indexer ce dossier"
++        },
++        "loading": {
++          "label": "chargement…"
++        },
++        "errorPrefix": {
++          "label": "Erreur :"
++        },
++        "upButton": {
++          "label": "↩ niveau supérieur"
++        },
++        "selectButton": {
++          "label": "sélectionner"
++        },
++        "empty": {
++          "label": "Aucun sous-dossier ici."
++        }
+       }
+     },
+     "costOverrides": {
+diff --git a/web/src/i18n/messages/ja.json b/web/src/i18n/messages/ja.json
+index 3cb0885..a0fdf81 100644
+--- a/web/src/i18n/messages/ja.json
++++ b/web/src/i18n/messages/ja.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "イントラネットのページとコミュニティ"
+         },
++        "nextcloud": {
++          "description": "Nextcloudに保存されたファイルとドキュメント"
++        },
+         "canvas": {
+           "description": "コース、ページ、お知らせ"
+         },
+@@ -2936,6 +2939,35 @@
+         "empty": {
+           "label": "表示するタブはありません。"
+         }
++      },
++      "folderPicker": {
++        "needsCredential": {
++          "label": "先に認証情報を作成してから、フォルダを参照してください。"
++        },
++        "browseButton": {
++          "label": "フォルダを参照"
++        },
++        "refreshButton": {
++          "label": "更新"
++        },
++        "addCurrentButton": {
++          "label": "このフォルダをインデックス"
++        },
++        "loading": {
++          "label": "読み込み中…"
++        },
++        "errorPrefix": {
++          "label": "エラー:"
++        },
++        "upButton": {
++          "label": "↩ 一つ上へ"
++        },
++        "selectButton": {
++          "label": "選択"
++        },
++        "empty": {
++          "label": "サブフォルダはありません。"
++        }
+       }
+     },
+     "costOverrides": {
+diff --git a/web/src/i18n/messages/ko.json b/web/src/i18n/messages/ko.json
+index bb5b56d..464cdc7 100644
+--- a/web/src/i18n/messages/ko.json
++++ b/web/src/i18n/messages/ko.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "인트라넷 페이지와 커뮤니티"
+         },
++        "nextcloud": {
++          "description": "Nextcloud에 저장된 파일 및 문서"
++        },
+         "canvas": {
+           "description": "강좌, 페이지, 공지"
+         },
+@@ -2936,6 +2939,35 @@
+         "empty": {
+           "label": "표시할 탭이 없습니다."
+         }
++      },
++      "folderPicker": {
++        "needsCredential": {
++          "label": "먼저 자격 증명을 만든 다음 폴더를 탐색하세요."
++        },
++        "browseButton": {
++          "label": "폴더 탐색"
++        },
++        "refreshButton": {
++          "label": "새로 고침"
++        },
++        "addCurrentButton": {
++          "label": "이 폴더 인덱싱"
++        },
++        "loading": {
++          "label": "불러오는 중…"
++        },
++        "errorPrefix": {
++          "label": "오류:"
++        },
++        "upButton": {
++          "label": "↩ 상위 폴더"
++        },
++        "selectButton": {
++          "label": "선택"
++        },
++        "empty": {
++          "label": "하위 폴더가 없습니다."
++        }
+       }
+     },
+     "costOverrides": {
+diff --git a/web/src/i18n/messages/pt.json b/web/src/i18n/messages/pt.json
+index 9895d01..7b3d8af 100644
+--- a/web/src/i18n/messages/pt.json
++++ b/web/src/i18n/messages/pt.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Páginas e comunidades da intranet"
+         },
++        "nextcloud": {
++          "description": "Ficheiros e documentos guardados no Nextcloud"
++        },
+         "canvas": {
+           "description": "Cursos, páginas e avisos"
+         },
+@@ -2936,6 +2939,35 @@
+         "empty": {
+           "label": "Nenhuma aba para mostrar."
+         }
++      },
++      "folderPicker": {
++        "needsCredential": {
++          "label": "Crie primeiro a credencial e depois navegue pelas pastas."
++        },
++        "browseButton": {
++          "label": "Explorar pastas"
++        },
++        "refreshButton": {
++          "label": "Atualizar"
++        },
++        "addCurrentButton": {
++          "label": "Indexar esta pasta"
++        },
++        "loading": {
++          "label": "carregando…"
++        },
++        "errorPrefix": {
++          "label": "Erro:"
++        },
++        "upButton": {
++          "label": "↩ um nível acima"
++        },
++        "selectButton": {
++          "label": "selecionar"
++        },
++        "empty": {
++          "label": "Sem subpastas aqui."
++        }
+       }
+     },
+     "costOverrides": {
+diff --git a/web/src/i18n/messages/zh.json b/web/src/i18n/messages/zh.json
+index fd75685..0fc1584 100644
+--- a/web/src/i18n/messages/zh.json
++++ b/web/src/i18n/messages/zh.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "内网页面和社区"
+         },
++        "nextcloud": {
++          "description": "存储在 Nextcloud 中的文件和文档"
++        },
+         "canvas": {
+           "description": "课程、页面和公告"
+         },
+@@ -2936,6 +2939,35 @@
+         "empty": {
+           "label": "没有可显示的标签页。"
+         }
++      },
++      "folderPicker": {
++        "needsCredential": {
++          "label": "请先创建凭据，然后即可浏览文件夹。"
++        },
++        "browseButton": {
++          "label": "浏览文件夹"
++        },
++        "refreshButton": {
++          "label": "刷新"
++        },
++        "addCurrentButton": {
++          "label": "索引此文件夹"
++        },
++        "loading": {
++          "label": "加载中…"
++        },
++        "errorPrefix": {
++          "label": "错误："
++        },
++        "upButton": {
++          "label": "↩ 上一级"
++        },
++        "selectButton": {
++          "label": "选择"
++        },
++        "empty": {
++          "label": "这里没有子文件夹。"
++        }
+       }
+     },
+     "costOverrides": {
+diff --git a/web/src/lib/connectors/connectors.tsx b/web/src/lib/connectors/connectors.tsx
+index a5f795a..fd7102c 100644
+--- a/web/src/lib/connectors/connectors.tsx
++++ b/web/src/lib/connectors/connectors.tsx
+@@ -48,7 +48,7 @@ const ONE_DRIVE_TRANSLATION_KEYS: OneDriveConfigurationText = {
+ };
+ 
+ function buildOneDriveConfiguration(
+-  text: OneDriveConfigurationText
++  text: OneDriveConfigurationText,
+ ): ConnectionConfiguration {
+   return {
+     description: text.description,
+@@ -128,7 +128,7 @@ function buildOneDriveConfiguration(
+ }
+ 
+ export function useConnectorConfiguration(
+-  connector: ConfigurableSources
++  connector: ConfigurableSources,
+ ): ConnectionConfiguration {
+   const t = useTranslations("admin.connectorsList.oneDrive");
+ 
+@@ -160,7 +160,7 @@ export function useConnectorConfiguration(
+ // the convention, including how to pick the default.
+ export function buildIncludeAttachmentsOption(
+   defaultValue: boolean,
+-  description: string = "Enable processing of page attachments including images and documents"
++  description: string = "Enable processing of page attachments including images and documents",
+ ): BooleanOption {
+   return {
+     type: "checkbox",
+@@ -1070,7 +1070,7 @@ export const connectorConfigs: Record<
+           "credential, Files.Read.All or Sites.Read.All on Graph, and " +
+           "Sites.FullControl.All on the SharePoint API to read each file's " +
+           "readers. With Sites.Selected, grant the app full control on each " +
+-          "channel site."
++          "channel site.",
+       ),
+       {
+         type: "checkbox",
+@@ -1167,7 +1167,7 @@ export const connectorConfigs: Record<
+       },
+       buildIncludeAttachmentsOption(
+         false,
+-        "Index the text of file attachments. Inline images, nested items and cloud links are skipped."
++        "Index the text of file attachments. Inline images, nested items and cloud links are skipped.",
+       ),
+       {
+         type: "checkbox",
+@@ -1669,6 +1669,39 @@ For example, specifying .*-alerts as a "channel to exclude" will cause the conne
+     values: [],
+     advanced_values: [],
+   },
++  nextcloud: {
++    description: "Configure Nextcloud connector",
++    values: [
++      {
++        type: "folder_picker",
++        query: "Browse your Nextcloud and pick the folders to index:",
++        label: "Folders",
++        name: "folders",
++        optional: true,
++        default: [],
++        description:
++          "Leave empty to index your whole Nextcloud account. Picked folders include their subfolders.",
++      },
++    ],
++    advanced_values: [
++      {
++        type: "checkbox",
++        query: "Verify SSL certificates",
++        label: "Verify SSL",
++        name: "verify_ssl",
++        optional: true,
++        default: true,
++      },
++      {
++        type: "number",
++        query: "Maximum file size to index (MB):",
++        label: "Max File Size (MB)",
++        name: "max_file_size_mb",
++        optional: true,
++        default: 25,
++      },
++    ],
++  },
+   s3: {
+     description: "Configure S3 connector",
+     values: [
+diff --git a/web/src/lib/connectors/constants.ts b/web/src/lib/connectors/constants.ts
+index 633b4d8..e68478e 100644
+--- a/web/src/lib/connectors/constants.ts
++++ b/web/src/lib/connectors/constants.ts
+@@ -89,4 +89,5 @@ export const SOURCE_DESCRIPTION_KEYS = {
+   [ValidSources.FederatedSlack]: "sources.federatedSlack.description",
+   [ValidSources.OneDrive]: "sources.onedrive.description",
+   [ValidSources.Zoom]: "sources.zoom.description",
++  [ValidSources.Nextcloud]: "sources.nextcloud.description",
+ } as const satisfies Record<ValidSources, string>;
+diff --git a/web/src/lib/connectors/credentials.ts b/web/src/lib/connectors/credentials.ts
+index 28c34dd..061b4e3 100644
+--- a/web/src/lib/connectors/credentials.ts
++++ b/web/src/lib/connectors/credentials.ts
+@@ -35,6 +35,7 @@ import type {
+   LinearCredentialJson,
+   LoopioCredentialJson,
+   LumAppsCredentialJson,
++  NextcloudCredentialJson,
+   NotionCredentialJson,
+   OCICredentialJson,
+   OneDriveAuthenticationMethod,
+@@ -111,6 +112,7 @@ type CredentialTemplateMap = Record<ValidSources, object | null> & {
+   highspot: HighspotCredentialJson;
+   imap: ImapCredentialJson;
+   testrail: TestRailCredentialJson;
++  nextcloud: NextcloudCredentialJson;
+ };
+ 
+ export const credentialTemplates: Record<ValidSources, any> = {
+@@ -178,6 +180,11 @@ export const credentialTemplates: Record<ValidSources, any> = {
+     box_user_email: null,
+   },
+   dropbox: { dropbox_access_token: "" },
++  nextcloud: {
++    server_url: "",
++    username: "",
++    app_password: "",
++  },
+   salesforce: {
+     sf_username: "",
+     sf_password: "",
+@@ -530,6 +537,11 @@ export const credentialDisplayNames: Record<string, string> = {
+   // Dropbox
+   dropbox_access_token: "Dropbox API Key",
+ 
++  // Nextcloud
++  server_url: "Nextcloud URL (e.g. https://cloud.example.com)",
++  username: "Nextcloud Username",
++  app_password: "Nextcloud App Password",
++
+   // R2
+   account_id: "R2 Account ID",
+   r2_access_key_id: "R2 Access Key ID",
+diff --git a/web/src/lib/connectors/types/credentialJson.ts b/web/src/lib/connectors/types/credentialJson.ts
+index 1b89253..cd26b57 100644
+--- a/web/src/lib/connectors/types/credentialJson.ts
++++ b/web/src/lib/connectors/types/credentialJson.ts
+@@ -149,6 +149,12 @@ export interface DropboxCredentialJson {
+   dropbox_access_token: string;
+ }
+ 
++export interface NextcloudCredentialJson {
++  server_url: string;
++  username: string;
++  app_password: string;
++}
++
+ export interface R2CredentialJson {
+   account_id: string;
+   r2_access_key_id: string;
+diff --git a/web/src/lib/connectors/types/form.ts b/web/src/lib/connectors/types/form.ts
+index ab35c5c..47f18ff 100644
+--- a/web/src/lib/connectors/types/form.ts
++++ b/web/src/lib/connectors/types/form.ts
+@@ -2,13 +2,7 @@
+ import type { Credential } from "./credential";
+ 
+ export type InputType =
+-  | "list"
+-  | "text"
+-  | "select"
+-  | "multiselect"
+-  | "boolean"
+-  | "number"
+-  | "file";
++  "list" | "text" | "select" | "multiselect" | "boolean" | "number" | "file";
+ 
+ export type StringWithDescription = {
+   value: string;
+@@ -20,14 +14,13 @@ export interface Option {
+   label: string | ((currentCredential: Credential<any> | null) => string);
+   name: string;
+   description?:
+-    | string
+-    | ((currentCredential: Credential<any> | null) => string);
++    string | ((currentCredential: Credential<any> | null) => string);
+   query?: string;
+   optional?: boolean;
+   hidden?: boolean;
+   visibleCondition?: (
+     values: any,
+-    currentCredential: Credential<any> | null
++    currentCredential: Credential<any> | null,
+   ) => boolean;
+   wrapInCollapsible?: boolean;
+   disabled?: boolean | ((currentCredential: Credential<any> | null) => boolean);
+@@ -51,6 +44,10 @@ export interface ListOption extends Option {
+   transform?: (values: string[]) => string[];
+ }
+ 
++export interface FolderPickerOption extends Option {
++  type: "folder_picker";
++  default?: string[];
++}
+ export interface StringPairListOption extends Option {
+   type: "string_pair_list";
+   // Object keys each row serializes to, e.g. { leftKey: "source", rightKey: "target" }.
+@@ -92,6 +89,7 @@ export interface StringTabOption extends Option {
+ 
+ export type ConnectorValueField =
+   | BooleanOption
++  | FolderPickerOption
+   | ListOption
+   | StringPairListOption
+   | TextOption
+@@ -121,6 +119,6 @@ export interface ConnectionConfiguration {
+   overrideDefaultFreq?: number;
+   advancedValuesVisibleCondition?: (
+     values: any,
+-    currentCredential: Credential<any> | null
++    currentCredential: Credential<any> | null,
+   ) => boolean;
+ }
+diff --git a/web/src/lib/connectors/utils.ts b/web/src/lib/connectors/utils.ts
+index f9cb2c1..67e426e 100644
+--- a/web/src/lib/connectors/utils.ts
++++ b/web/src/lib/connectors/utils.ts
+@@ -47,14 +47,14 @@ interface ConnectorValidationMessages {
+ }
+ 
+ const buildInitialValuesForFields = (
+-  fields: ConnectorField[]
++  fields: ConnectorField[],
+ ): Record<string, any> =>
+   fields.reduce<Record<string, any>>((acc, field) => {
+     if (field.type === "tab") {
+       acc[field.name] = field.defaultTab ?? field.tabs[0]?.value ?? "";
+       Object.assign(
+         acc,
+-        buildInitialValuesForFields(field.tabs.flatMap((tab) => tab.fields))
++        buildInitialValuesForFields(field.tabs.flatMap((tab) => tab.fields)),
+       );
+     } else if (field.type === "select") {
+       acc[field.name] = null;
+@@ -71,7 +71,7 @@ const buildInitialValuesForFields = (
+   }, {});
+ 
+ export function createConnectorInitialValues(
+-  connector: ConfigurableSources
++  connector: ConfigurableSources,
+ ): Record<string, any> &
+   AccessTypeGroupSelectorFormType &
+   ConnectorGroupRestrictionFormValues {
+@@ -91,7 +91,7 @@ export function createConnectorInitialValues(
+ export function createConnectorValidationSchema(
+   connector: ConfigurableSources,
+   requireGroups: boolean = false,
+-  messages: ConnectorValidationMessages = {}
++  messages: ConnectorValidationMessages = {},
+ ): Yup.ObjectSchema<Record<string, any>> {
+   const configuration = connectorConfigs[connector];
+   const fields = [...configuration.values, ...configuration.advanced_values];
+@@ -105,13 +105,15 @@ export function createConnectorValidationSchema(
+             ? Yup.array().of(Yup.string())
+             : field.type === "multiselect"
+               ? Yup.array().of(Yup.string())
+-              : field.type === "string_pair_list"
+-                ? Yup.array().of(Yup.object())
+-                : field.type === "checkbox"
+-                  ? Yup.boolean()
+-                  : field.type === "file"
+-                    ? Yup.mixed()
+-                    : Yup.string();
++              : field.type === "folder_picker"
++                ? Yup.array().of(Yup.string())
++                : field.type === "string_pair_list"
++                  ? Yup.array().of(Yup.object())
++                  : field.type === "checkbox"
++                    ? Yup.boolean()
++                    : field.type === "file"
++                      ? Yup.mixed()
++                      : Yup.string();
+ 
+       if (!field.optional) {
+         schema = schema.required(`${field.label} is required`);
+@@ -120,7 +122,7 @@ export function createConnectorValidationSchema(
+       acc[field.name] = schema;
+       return acc;
+     },
+-    {}
++    {},
+   );
+ 
+   if (connector === ValidSources.OneDrive) {
+@@ -140,18 +142,18 @@ export function createConnectorValidationSchema(
+       .when("access_type", ([accessType], schema) =>
+         requireGroups && accessType !== "sync"
+           ? schema.min(1, "Select at least one group you manage")
+-          : schema
++          : schema,
+       ),
+     ...fieldSchemas,
+     // These are advanced settings
+     indexingStart: Yup.string().nullable(),
+     pruneFreq: Yup.number().min(
+       0.083,
+-      "Prune frequency must be at least 0.083 hours (5 minutes)"
++      "Prune frequency must be at least 0.083 hours (5 minutes)",
+     ),
+     refreshFreq: Yup.number().min(
+       1,
+-      "Refresh frequency must be at least 1 minute"
++      "Refresh frequency must be at least 1 minute",
+     ),
+   });
+ 
+@@ -173,7 +175,7 @@ export function getDisplayNameForCredentialKey(key: string): string {
+ export function createTypedFile(
+   file: File,
+   fieldKey: string,
+-  typeDefinitionKey: FileTypeCategory
++  typeDefinitionKey: FileTypeCategory,
+ ): TypedFile {
+   const typeDefinition = FILE_TYPE_DEFINITIONS[typeDefinitionKey];
+   if (!typeDefinition) {
+@@ -196,7 +198,7 @@ export function isTypedFileField(fieldKey: string): boolean {
+ 
+ // Get the appropriate file type definition for a field
+ export function getFileTypeDefinitionForField(
+-  fieldKey: string
++  fieldKey: string,
+ ): FileTypeCategory | null {
+   const fieldToTypeMap: Record<string, FileTypeCategory> = {
+     sp_private_key: FileTypeCategory.SHAREPOINT_PFX_FILE,
+@@ -220,7 +222,7 @@ export function buildCCPairInfoUrl(ccPairId: string | number) {
+ 
+ export function buildSimilarCredentialInfoURL(
+   source_type: ValidSources,
+-  get_editable: boolean = false
++  get_editable: boolean = false,
+ ) {
+   return SWR_KEYS.similarCredentials(source_type, get_editable);
+ }
+@@ -229,7 +231,7 @@ export function getTooltipMessage(
+   isInvalid: boolean,
+   isDeleting: boolean,
+   isIndexing: boolean,
+-  isDisabled: boolean
++  isDisabled: boolean,
+ ): string | undefined {
+   if (isInvalid) {
+     return "Connector is in an invalid state. Please update the credentials or configuration before re-indexing.";
+@@ -250,7 +252,7 @@ export function getTooltipMessage(
+  * Returns true if the status is not currently active (i.e. paused or invalid), but not deleting
+  */
+ export function statusIsNotCurrentlyActive(
+-  status: ConnectorCredentialPairStatus
++  status: ConnectorCredentialPairStatus,
+ ): boolean {
+   return (
+     status === ConnectorCredentialPairStatus.PAUSED ||
+@@ -267,12 +269,12 @@ export function statusIsNotCurrentlyActive(
+ // total duration so the long pole sits first.
+ export function sortPerBatchStages(
+   stages: IndexAttemptStageMetric[],
+-  sortMode: SortMode
++  sortMode: SortMode,
+ ): IndexAttemptStageMetric[] {
+   const sorted = [...stages];
+   if (sortMode === "pipeline") {
+     sorted.sort(
+-      (a, b) => (PIPELINE_ORDER[a.stage] ?? 0) - (PIPELINE_ORDER[b.stage] ?? 0)
++      (a, b) => (PIPELINE_ORDER[a.stage] ?? 0) - (PIPELINE_ORDER[b.stage] ?? 0),
+     );
+   } else {
+     sorted.sort((a, b) => b.total_duration_ms - a.total_duration_ms);
+diff --git a/web/src/lib/sources.ts b/web/src/lib/sources.ts
+index 1216dcb..251e4f8 100644
+--- a/web/src/lib/sources.ts
++++ b/web/src/lib/sources.ts
+@@ -4,6 +4,7 @@ import {
+   GoogleStorageIcon,
+   BraintrustIcon,
+   BoxIcon,
++  NextcloudIcon,
+ } from "@/components/icons/icons";
+ import { ValidSources } from "@/lib/types";
+ import { SourceCategory, SourceMetadata } from "@/lib/search/types";
+@@ -229,6 +230,11 @@ export const SOURCE_METADATA_MAP: SourceMap = {
+     category: SourceCategory.Storage,
+     docs: `${DOCS_ADMINS_PATH}/connectors/official/dropbox`,
+   },
++  nextcloud: {
++    icon: NextcloudIcon,
++    displayName: "Nextcloud",
++    category: SourceCategory.Storage,
++  },
+   s3: {
+     icon: S3Icon,
+     displayName: "S3",
+diff --git a/web/src/lib/types.ts b/web/src/lib/types.ts
+index 8a295c4..1be20ef 100644
+--- a/web/src/lib/types.ts
++++ b/web/src/lib/types.ts
+@@ -658,6 +658,7 @@ export enum ValidSources {
+   TestRail = "testrail",
+   Braintrust = "braintrust",
+   Lumapps = "lumapps",
++  Nextcloud = "nextcloud",
+   Canvas = "canvas",
+   Zoom = "zoom",
+ 
+diff --git a/web/src/views/admin/connectors/AddConnectorPage/form/FieldRendering.tsx b/web/src/views/admin/connectors/AddConnectorPage/form/FieldRendering.tsx
+index 5e3fa31..a8dc098 100644
+--- a/web/src/views/admin/connectors/AddConnectorPage/form/FieldRendering.tsx
++++ b/web/src/views/admin/connectors/AddConnectorPage/form/FieldRendering.tsx
+@@ -5,6 +5,7 @@ import SelectInput from "./inputs/SelectInput";
+ import NumberInput from "./inputs/NumberInput";
+ import { TextFormField, MultiSelectField } from "@/components/Field";
+ import ListInput from "./inputs/ListInput";
++import FolderPickerInput from "./inputs/FolderPickerInput";
+ import StringPairListInput from "./inputs/StringPairListInput";
+ import FileInput from "./inputs/FileInput";
+ import { ConfigurableSources } from "@/lib/types";
+@@ -189,6 +190,14 @@ export const RenderField: FC<RenderFieldProps> = ({
+         />
+       ) : field.type === "list" ? (
+         <ListInput name={field.name} label={label} description={description} />
++      ) : field.type === "folder_picker" ? (
++        <FolderPickerInput
++          name={field.name}
++          label={label}
++          description={description}
++          credentialId={currentCredential?.id}
++          verifySsl={values["verify_ssl"]}
++        />
+       ) : field.type === "string_pair_list" ? (
+         <StringPairListInput
+           name={field.name}
+diff --git a/web/src/views/admin/connectors/AddConnectorPage/form/inputs/FolderPickerInput.tsx b/web/src/views/admin/connectors/AddConnectorPage/form/inputs/FolderPickerInput.tsx
+new file mode 100644
+index 0000000..22f0379
+--- /dev/null
++++ b/web/src/views/admin/connectors/AddConnectorPage/form/inputs/FolderPickerInput.tsx
+@@ -0,0 +1,191 @@
++"use client";
++
++import { useState } from "react";
++import { useTranslations } from "next-intl";
++import { useFormikContext } from "formik";
++import { Button } from "@opal/components";
++import { InputVertical } from "@opal/layouts";
++import Text from "@/refresh-components/texts/Text";
++
++interface NextcloudFolder {
++  name: string;
++  path: string;
++}
++
++interface FolderPickerInputProps {
++  name: string;
++  label: string;
++  description?: string;
++  credentialId?: number;
++  verifySsl?: boolean;
++}
++
++/**
++ * Folder browser for the Nextcloud connector.
++ *
++ * Lists folders through `/api/manage/admin/nextcloud/browse`, which reads the
++ * already-stored credential server-side. Selected folders are written back into
++ * the form as a list of paths.
++ */
++export default function FolderPickerInput({
++  name,
++  label,
++  description,
++  credentialId,
++  verifySsl,
++}: FolderPickerInputProps) {
++  const t = useTranslations("admin.connectorsList.folderPicker");
++  const { values, setFieldValue } = useFormikContext<Record<string, any>>();
++  const selected: string[] = Array.isArray(values[name]) ? values[name] : [];
++
++  const [path, setPath] = useState<string | null>(null);
++  const [folders, setFolders] = useState<NextcloudFolder[]>([]);
++  const [loading, setLoading] = useState(false);
++  const [error, setError] = useState<string | null>(null);
++
++  const load = async (target: string) => {
++    if (!credentialId) {
++      setError(t("needsCredential.label"));
++      return;
++    }
++    setLoading(true);
++    setError(null);
++    try {
++      const response = await fetch("/api/manage/admin/nextcloud/browse", {
++        method: "POST",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({
++          credential_id: credentialId,
++          path: target,
++          verify_ssl: verifySsl ?? true,
++        }),
++      });
++      if (!response.ok) {
++        const detail = await response.text();
++        setError(detail.slice(0, 300) || `HTTP ${response.status}`);
++        setFolders([]);
++        return;
++      }
++      const data = await response.json();
++      setFolders(data.folders ?? []);
++      setPath(data.path ?? "");
++    } catch (caught) {
++      setError(String(caught).slice(0, 300));
++    } finally {
++      setLoading(false);
++    }
++  };
++
++  const addFolder = (folder: string) => {
++    if (!folder || selected.includes(folder)) return;
++    setFieldValue(name, [...selected, folder]);
++  };
++
++  const removeFolder = (folder: string) => {
++    setFieldValue(
++      name,
++      selected.filter((item) => item !== folder),
++    );
++  };
++
++  const current = path ?? "";
++  const parent = current.includes("/")
++    ? current.slice(0, current.lastIndexOf("/"))
++    : "";
++
++  return (
++    <InputVertical withLabel={name} title={label} description={description}>
++      <div className="flex flex-col gap-2">
++        {selected.length > 0 && (
++          <div className="flex flex-wrap gap-1">
++            {selected.map((folder) => (
++              <Button
++                key={folder}
++                prominence="secondary"
++                size="sm"
++                onClick={() => removeFolder(folder)}
++              >
++                {`${folder} ✕`}
++              </Button>
++            ))}
++          </div>
++        )}
++
++        <div className="flex flex-wrap gap-1">
++          <Button
++            prominence="secondary"
++            size="sm"
++            disabled={loading}
++            onClick={() => load(current)}
++          >
++            {path === null ? t("browseButton.label") : t("refreshButton.label")}
++          </Button>
++          {path !== null && (
++            <Button
++              prominence="tertiary"
++              size="sm"
++              onClick={() => addFolder(current)}
++            >
++              {t("addCurrentButton.label")}
++            </Button>
++          )}
++        </div>
++
++        {path !== null && (
++          <Text text03 secondaryBody>
++            {`/${current}`}
++            {loading ? ` — ${t("loading.label")}` : ""}
++          </Text>
++        )}
++
++        {error && (
++          <Text text03 secondaryBody>
++            {`${t("errorPrefix.label")} ${error}`}
++          </Text>
++        )}
++
++        {folders.length > 0 && (
++          <div className="flex flex-col gap-1">
++            {current !== "" && (
++              <Button
++                prominence="tertiary"
++                size="sm"
++                onClick={() => load(parent)}
++              >
++                {t("upButton.label")}
++              </Button>
++            )}
++            {folders.map((folder) => (
++              <div
++                key={folder.path}
++                className="flex flex-wrap items-center gap-1"
++              >
++                <Button
++                  prominence="tertiary"
++                  size="sm"
++                  onClick={() => load(folder.path)}
++                >
++                  {`📁 ${folder.name}`}
++                </Button>
++                <Button
++                  prominence="secondary"
++                  size="sm"
++                  disabled={selected.includes(folder.path)}
++                  onClick={() => addFolder(folder.path)}
++                >
++                  {t("selectButton.label")}
++                </Button>
++              </div>
++            ))}
++          </div>
++        )}
++
++        {path !== null && !loading && folders.length === 0 && !error && (
++          <Text text03 secondaryBody>
++            {t("empty.label")}
++          </Text>
++        )}
++      </div>
++    </InputVertical>
++  );
++}
