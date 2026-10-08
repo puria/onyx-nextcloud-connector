@@ -109,6 +109,25 @@ Comment out the two `ONYX_*_IMAGE` lines in the deployment `.env` and run
    (resolve conflicts), `git diff > nextcloud-web.patch`.
 3. Rebuild both images with the new tag and update the deployment `.env`.
 
+## Embedding model performance
+
+Onyx v4.9 embeds with a local CPU model by default (nomic-embed-text-v1,
+8 threads, ~20 s per 8 chunks). For anything beyond a handful of small files,
+set a faster embedder — either in the UI
+(`Admin Panel → Index Settings → Document Processing → Embedding Model`,
+e.g. OpenAI `text-embedding-3-small`) or via the deployment `.env`:
+
+```env
+DOCUMENT_ENCODER_MODEL=BAAI/bge-small-en-v1.5
+DOC_EMBEDDING_DIM=384
+EMBEDDING_BATCH_SIZE=32
+INDEXING_EMBEDDING_MODEL_NUM_THREADS=16
+```
+
+then `docker compose up -d` in the deployment directory. Changing the
+embedding model requires a full re-index (no data is lost when nothing was
+indexed yet).
+
 ## Test
 
 `tests/check_connector.py` runs inside the backend image against an in-process
