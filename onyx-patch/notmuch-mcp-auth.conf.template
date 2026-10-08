@@ -1,0 +1,32 @@
+map_hash_bucket_size 128;
+
+map $http_authorization $notmuch_mcp_authorized {
+    default 0;
+    "Bearer ${NOTMUCH_MCP_API_KEY}" 1;
+}
+
+server {
+    listen 8765;
+    server_name _;
+
+    location = /healthz {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location /mcp {
+        if ($notmuch_mcp_authorized = 0) {
+            return 401;
+        }
+
+        proxy_pass http://notmuch-mcp:8765;
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_request_buffering off;
+        proxy_read_timeout 1800s;
+        proxy_send_timeout 1800s;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+    }
+}
