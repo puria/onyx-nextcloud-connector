@@ -96,6 +96,71 @@ the backend containers gives them new IPs. Without the restart every `/api/*`
 request returns `502 Bad Gateway` (HTML), which the UI surfaces as
 "backend is currently unavailable" / `JSON.parse: unexpected character`.
 
+## Connect a local notmuch mail MCP server
+
+The host's `mcp-server-notmuch` speaks stdio, while Onyx accepts network MCP
+transports. `notmuch-mcp.Dockerfile` packages the upstream read-only server
+with Supergateway as Streamable HTTP. The Compose service has **no published
+port** and runs on an internal Docker network shared only with `api_server`.
+The mail database and config are mounted read-only; no `--allow-drafts`,
+`--allow-tags` or `--allow-export` flags are passed.
+
+For a local deployment, add a `notmuch-mcp` service to the deployment's
+`docker-compose.override.yml` and attach `api_server` to the same external
+internal network:
+
+```yaml
+services:
+  api_server:
+    networks: [default, notmuch-mcp]
+  notmuch-mcp:
+    build:
+      context: /path/to/onyx-nextcloud-connector/onyx-patch
+      dockerfile: notmuch-mcp.Dockerfile
+    environment:
+      HOME: ${HOME}
+      NOTMUCH_CONFIG: ${HOME}/.notmuch-config
+    volumes:
+      - ${HOME}/.config/mcp-server-notmuch/config.toml:${HOME}/.config/mcp-server-notmuch/config.toml:ro
+      - ${HOME}/.config/notmuch/config:${HOME}/.notmuch-config:ro
+      - ${HOME}/.local/share/mail:${HOME}/.local/share/mail:ro
+    networks: [notmuch-mcp]
+networks:
+  notmuch-mcp:
+    external: true
+    name: onyx-notmuch-mcp
+```
+
+Create the isolated network once (choose a private subnet that does not
+overlap the host LAN or existing Docker networks), then start the service:
+
+```sh
+docker network create --internal --subnet 10.254.250.0/24 onyx-notmuch-mcp
+docker compose up -d api_server notmuch-mcp
+```
+
+Onyx v4.9 defaults to blocking private outbound MCP URLs. To let its API server
+reach this RFC1918-only network, set `MCP_SERVER_ALLOW_PRIVATE_NETWORK=true`
+in the deployment `.env` (or Admin Panel → Organization → Security & Hardening
+→ SSRF Protection → Allow Private Network) and recreate `api_server`. This
+allows admin-configured MCP/OAuth connections to reach RFC1918 addresses, but
+still blocks loopback and cloud metadata endpoints. Keep this bridge on the
+isolated network; do not publish port 8765 to the host/LAN.
+
+Then in **Admin Panel → MCP Actions → Add MCP Server**:
+
+- URL: `http://notmuch-mcp:8765/mcp`
+- Authentication: **No Auth** (the endpoint has no host/LAN port and is only
+  reachable from `api_server` on the dedicated internal network)
+- Visibility: **private**, assigned only to your user/group; do not make mail
+  tools public to other Onyx users
+- Connect, then enable only the read tools you need. Draft, tag and export tools
+  are not registered by this server.
+
+The wrapper was verified from the Onyx API container: Streamable HTTP
+initialization succeeds and it lists the notmuch read-tier tools without
+fetching or printing any email content.
+
 ## Rollback
 
 Comment out the two `ONYX_*_IMAGE` lines in the deployment `.env` and run
