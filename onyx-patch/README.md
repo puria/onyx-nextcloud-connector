@@ -17,6 +17,8 @@ Backend (overlaid onto the upstream `onyxdotapp/onyx-backend:v4.9.0` image):
 | `onyx/configs/constants.py` | `DocumentSource.NEXTCLOUD = "nextcloud"` + description entry |
 | `onyx/connectors/registry.py` | `CONNECTOR_CLASS_MAP` entry → `NextcloudConnector` |
 | `onyx/connectors/nextcloud/` | new package: `config.py`, `client.py` (WebDAV), `connector.py` |
+| `onyx/server/documents/nextcloud_browse.py` | new `POST /manage/admin/nextcloud/browse` route (folder listing for the UI picker) |
+| `onyx/main.py` | imports and registers the browse router (2 lines) |
 
 Web (fresh clone of the pinned upstream tag + `nextcloud-web.patch`, built with
 the upstream `web/Dockerfile` steps):
@@ -30,14 +32,19 @@ the upstream `web/Dockerfile` steps):
 | `src/lib/connectors/connectors.tsx` | `connectorConfigs.nextcloud` form fields |
 | `src/lib/connectors/credentials.ts` | credential template + display names |
 | `src/lib/connectors/types/credentialJson.ts` | `NextcloudCredentialJson` |
-| `src/i18n/messages/*.json` | `sources.nextcloud.description` in all 9 locales |
+| `src/i18n/messages/*.json` | `sources.nextcloud.description` + `connectorsList.folderPicker.*` in all 9 locales |
+| `src/views/.../form/inputs/FolderPickerInput.tsx` | folder browser input (calls the browse route) |
+| `src/lib/connectors/types/form.ts`, `utils.ts` | `folder_picker` field type + validation |
+| `web/public/Nextcloud.svg` | official Nextcloud logo asset |
 
-The web patch is **purely additive** (103 insertions, 0 deletions) so it stays
-rebaseable on Onyx upgrades.
+The web patch only adds new code plus small edits at existing extension points
+(no upstream logic is rewritten), so it stays rebaseable on Onyx upgrades.
 
-Connector behaviour (same guarantees as the standalone bridge):
+## Connector behaviour (same guarantees as the standalone bridge)
 
 - WebDAV only (`PROPFIND` `Depth: 1` recursion + `GET`); internal storage untouched.
+- The scan **streams**: batches are handed to Onyx as folders are listed, so
+  indexing progress is visible immediately even on large accounts.
 - Stable document IDs `nc-<instance-hash>-<fileid>`; `oc:fileid` survives renames/moves.
 - Text extracted by Onyx's own `extract_text_and_images` (PDF/DOCX/TXT/MD).
 - Files that change between scan and download are re-fetched (3 attempts), then the
@@ -46,6 +53,13 @@ Connector behaviour (same guarantees as the standalone bridge):
 - Oversized files (`max_file_size_mb`, default 25) are skipped.
 - Scan/auth/download errors fail the indexing attempt instead of publishing a
   partial result, so nothing is removed from the index on a broken scan.
+- `folders: []` means the whole account; otherwise only the listed folders (and
+  their subfolders) are indexed.
+- `validate_connector_settings` runs as Onyx's "Connector settings validation"
+  capability check: a live WebDAV call that reports a bad URL, bad app password
+  or missing folder.
+- The connector form can **browse folders** (`POST /manage/admin/nextcloud/browse`),
+  which lists folders using the stored credential — no paths typed by hand.
 - Credentials never logged; document contents never logged.
 
 ## Build

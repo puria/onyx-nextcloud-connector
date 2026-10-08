@@ -32,9 +32,14 @@ testpaths = ["tests"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# FastAPI endpoints use Depends() in argument defaults by design.
+"onyx-patch/backend/**/*.py" = ["B008"]
 [tool.ruff]
 extend-exclude = [
     "onyx-patch/backend/onyx/configs/constants.py",
     "onyx-patch/backend/onyx/connectors/registry.py",
+    "onyx-patch/backend/onyx/main.py",
 ]
 line-length = 100

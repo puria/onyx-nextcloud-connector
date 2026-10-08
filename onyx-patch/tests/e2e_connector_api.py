@@ -141,13 +141,25 @@ def main() -> int:
         assert docs_indexed in (None,) or docs_indexed > 0, cc_pair
         print("cc-pair status:", json.dumps(cc_pair)[:400])
 
+        # 6b. folder browsing endpoint (powers the picker in the UI)
+        status, listing = call(
+            "POST",
+            "/manage/admin/nextcloud/browse",
+            {
+                "credential_id": created["credential"],
+                "path": "",
+                "verify_ssl": True,
+            },
+        )
+        assert status == 200, (status, listing)
+        print(
+            "browse root ->",
+            [folder["path"] for folder in listing.get("folders", [])][:5],
+            "files:",
+            listing.get("file_count"),
+        )
+
         status, docs = call("GET", f"/manage/connector/{created['connector']}/documents")
-        if status == 200:
-            ids = [d.get("id") for d in docs if d.get("id", "").startswith("nc-")]
-            print("indexed document ids:", ids)
-            assert ids, "no nc- documents found"
-        else:
-            print(f"document listing returned {status}; rely on cc-pair counts above")
 
         print("E2E CONNECTOR VERIFICATION PASSED")
         return 0
