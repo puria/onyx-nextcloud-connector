@@ -33,4 +33,8 @@ testpaths = ["tests"]
 select = ["E", "F", "I", "UP", "B"]
 ignore = ["E501"]
 [tool.ruff]
+extend-exclude = [
+    "onyx-patch/backend/onyx/configs/constants.py",
+    "onyx-patch/backend/onyx/connectors/registry.py",
+]
 line-length = 100

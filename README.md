@@ -1,11 +1,17 @@
-# Nextcloud → Onyx sync bridge
+# Nextcloud → Onyx connector
 
-A small, standalone bridge that indexes files from Nextcloud into [Onyx](https://onyx.app)
-through WebDAV and Onyx's ingestion API. It does **not** fork or modify Onyx.
+This repository ships **two independent ways** to index Nextcloud into [Onyx](https://onyx.app):
 
-- Nextcloud access uses WebDAV only (`PROPFIND`/`GET`); internal storage is never touched.
-- Sync state lives in SQLite; a version is marked synced only after Onyx accepts it.
-- Deletions are reconciled only after a complete, successful scan of the configured scope.
+1. **Native Onyx connector** (`onyx-patch/`) — patches Onyx v4.9.0 so a `Nextcloud`
+   connector appears under _Admin Panel → Connectors_ with its own configuration form,
+   credentials UI and indexing pipeline. The running instance on this machine already
+   uses it. See `onyx-patch/README.md` for build, deploy, rollback and upgrade notes.
+2. **Standalone bridge** (below) — an external sync process using Onyx's ingestion API.
+   Does not modify Onyx; useful when you cannot rebuild the Onyx images.
+
+Both use WebDAV only (`PROPFIND`/`GET`; Nextcloud internal storage is never touched),
+keep stable document IDs across renames and moves, skip scanned PDFs without extractable
+text, and never log credentials or document contents.
 
 ## Onyx API surface used (verified)
 

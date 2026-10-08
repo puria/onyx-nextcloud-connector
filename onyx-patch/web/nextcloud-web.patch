@@ -1,0 +1,302 @@
+diff --git a/web/src/components/icons/icons.tsx b/web/src/components/icons/icons.tsx
+index de95c70..0578004 100644
+--- a/web/src/components/icons/icons.tsx
++++ b/web/src/components/icons/icons.tsx
+@@ -249,3 +249,23 @@ export const S3Icon = createLogoIcon(s3Icon);
+ export const ServiceNowIcon = createLogoIcon(serviceNowIcon);
+ export const TrelloIcon = createLogoIcon(trelloIcon);
+ export const ZAIIcon = createLogoIcon(zAIIcon);
++
++export const NextcloudIcon = ({
++  size = 16,
++  className = defaultTailwindCSS,
++}: IconProps) => (
++  <svg
++    width={size}
++    height={size}
++    viewBox="0 0 24 24"
++    fill="currentColor"
++    className={className}
++    aria-hidden="true"
++  >
++    {/* Simplified Nextcloud mark: three circles joined by a cloud body */}
++    <circle cx="6.7" cy="16.4" r="3.5" />
++    <circle cx="17.3" cy="16.4" r="3.5" />
++    <circle cx="12" cy="7.2" r="4.1" />
++    <rect x="4.6" y="14.7" width="14.8" height="3.6" rx="1.8" />
++  </svg>
++);
+diff --git a/web/src/i18n/messages/ar.json b/web/src/i18n/messages/ar.json
+index 0206022..33de01e 100644
+--- a/web/src/i18n/messages/ar.json
++++ b/web/src/i18n/messages/ar.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "صفحات الشبكة الداخلية والمجتمعات"
+         },
++        "nextcloud": {
++          "description": "الملفات والمستندات المخزنة في Nextcloud"
++        },
+         "canvas": {
+           "description": "الدورات والصفحات والإعلانات"
+         },
+diff --git a/web/src/i18n/messages/de.json b/web/src/i18n/messages/de.json
+index f4d5f47..049bc74 100644
+--- a/web/src/i18n/messages/de.json
++++ b/web/src/i18n/messages/de.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Intranet-Seiten und Communities"
+         },
++        "nextcloud": {
++          "description": "In Nextcloud gespeicherte Dateien und Dokumente"
++        },
+         "canvas": {
+           "description": "Kurse, Seiten und Ankündigungen"
+         },
+diff --git a/web/src/i18n/messages/en.json b/web/src/i18n/messages/en.json
+index 76c2d70..3849ee2 100644
+--- a/web/src/i18n/messages/en.json
++++ b/web/src/i18n/messages/en.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Intranet pages & communities"
+         },
++        "nextcloud": {
++          "description": "Files and documents stored in Nextcloud"
++        },
+         "canvas": {
+           "description": "Courses, pages, & announcements"
+         },
+diff --git a/web/src/i18n/messages/es.json b/web/src/i18n/messages/es.json
+index 2ea6e9c..f4fdf08 100644
+--- a/web/src/i18n/messages/es.json
++++ b/web/src/i18n/messages/es.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Páginas y comunidades de la intranet"
+         },
++        "nextcloud": {
++          "description": "Archivos y documentos almacenados en Nextcloud"
++        },
+         "canvas": {
+           "description": "Cursos, páginas y anuncios"
+         },
+diff --git a/web/src/i18n/messages/fr.json b/web/src/i18n/messages/fr.json
+index 0f12f24..b0e3700 100644
+--- a/web/src/i18n/messages/fr.json
++++ b/web/src/i18n/messages/fr.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Pages et communautés de l'intranet"
+         },
++        "nextcloud": {
++          "description": "Fichiers et documents stockés dans Nextcloud"
++        },
+         "canvas": {
+           "description": "Cours, pages et annonces"
+         },
+diff --git a/web/src/i18n/messages/ja.json b/web/src/i18n/messages/ja.json
+index 3cb0885..e0e3299 100644
+--- a/web/src/i18n/messages/ja.json
++++ b/web/src/i18n/messages/ja.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "イントラネットのページとコミュニティ"
+         },
++        "nextcloud": {
++          "description": "Nextcloudに保存されたファイルとドキュメント"
++        },
+         "canvas": {
+           "description": "コース、ページ、お知らせ"
+         },
+diff --git a/web/src/i18n/messages/ko.json b/web/src/i18n/messages/ko.json
+index bb5b56d..b5608b3 100644
+--- a/web/src/i18n/messages/ko.json
++++ b/web/src/i18n/messages/ko.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "인트라넷 페이지와 커뮤니티"
+         },
++        "nextcloud": {
++          "description": "Nextcloud에 저장된 파일 및 문서"
++        },
+         "canvas": {
+           "description": "강좌, 페이지, 공지"
+         },
+diff --git a/web/src/i18n/messages/pt.json b/web/src/i18n/messages/pt.json
+index 9895d01..0577504 100644
+--- a/web/src/i18n/messages/pt.json
++++ b/web/src/i18n/messages/pt.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "Páginas e comunidades da intranet"
+         },
++        "nextcloud": {
++          "description": "Ficheiros e documentos guardados no Nextcloud"
++        },
+         "canvas": {
+           "description": "Cursos, páginas e avisos"
+         },
+diff --git a/web/src/i18n/messages/zh.json b/web/src/i18n/messages/zh.json
+index fd75685..b6c833c 100644
+--- a/web/src/i18n/messages/zh.json
++++ b/web/src/i18n/messages/zh.json
+@@ -999,6 +999,9 @@
+         "lumapps": {
+           "description": "内网页面和社区"
+         },
++        "nextcloud": {
++          "description": "存储在 Nextcloud 中的文件和文档"
++        },
+         "canvas": {
+           "description": "课程、页面和公告"
+         },
+diff --git a/web/src/lib/connectors/connectors.tsx b/web/src/lib/connectors/connectors.tsx
+index a5f795a..b2a2b4f 100644
+--- a/web/src/lib/connectors/connectors.tsx
++++ b/web/src/lib/connectors/connectors.tsx
+@@ -1669,6 +1669,36 @@ For example, specifying .*-alerts as a "channel to exclude" will cause the conne
+     values: [],
+     advanced_values: [],
+   },
++  nextcloud: {
++    description: "Configure Nextcloud connector",
++    values: [
++      {
++        type: "list",
++        query: "Enter the Nextcloud folders to index:",
++        label: "Folders",
++        name: "folders",
++        optional: false,
++        description:
++          "Folders relative to your Nextcloud root (e.g. 'Documents' or 'Projects/Notes'). Subfolders are included.",
++      },
++    ],
++    advanced_values: [
++      {
++        type: "checkbox",
++        query: "Verify SSL certificates",
++        label: "Verify SSL",
++        name: "verify_ssl",
++        optional: true,
++      },
++      {
++        type: "number",
++        query: "Maximum file size to index (MB):",
++        label: "Max File Size (MB)",
++        name: "max_file_size_mb",
++        optional: true,
++      },
++    ],
++  },
+   s3: {
+     description: "Configure S3 connector",
+     values: [
+diff --git a/web/src/lib/connectors/constants.ts b/web/src/lib/connectors/constants.ts
+index 633b4d8..e68478e 100644
+--- a/web/src/lib/connectors/constants.ts
++++ b/web/src/lib/connectors/constants.ts
+@@ -89,4 +89,5 @@ export const SOURCE_DESCRIPTION_KEYS = {
+   [ValidSources.FederatedSlack]: "sources.federatedSlack.description",
+   [ValidSources.OneDrive]: "sources.onedrive.description",
+   [ValidSources.Zoom]: "sources.zoom.description",
++  [ValidSources.Nextcloud]: "sources.nextcloud.description",
+ } as const satisfies Record<ValidSources, string>;
+diff --git a/web/src/lib/connectors/credentials.ts b/web/src/lib/connectors/credentials.ts
+index 28c34dd..061b4e3 100644
+--- a/web/src/lib/connectors/credentials.ts
++++ b/web/src/lib/connectors/credentials.ts
+@@ -35,6 +35,7 @@ import type {
+   LinearCredentialJson,
+   LoopioCredentialJson,
+   LumAppsCredentialJson,
++  NextcloudCredentialJson,
+   NotionCredentialJson,
+   OCICredentialJson,
+   OneDriveAuthenticationMethod,
+@@ -111,6 +112,7 @@ type CredentialTemplateMap = Record<ValidSources, object | null> & {
+   highspot: HighspotCredentialJson;
+   imap: ImapCredentialJson;
+   testrail: TestRailCredentialJson;
++  nextcloud: NextcloudCredentialJson;
+ };
+ 
+ export const credentialTemplates: Record<ValidSources, any> = {
+@@ -178,6 +180,11 @@ export const credentialTemplates: Record<ValidSources, any> = {
+     box_user_email: null,
+   },
+   dropbox: { dropbox_access_token: "" },
++  nextcloud: {
++    server_url: "",
++    username: "",
++    app_password: "",
++  },
+   salesforce: {
+     sf_username: "",
+     sf_password: "",
+@@ -530,6 +537,11 @@ export const credentialDisplayNames: Record<string, string> = {
+   // Dropbox
+   dropbox_access_token: "Dropbox API Key",
+ 
++  // Nextcloud
++  server_url: "Nextcloud URL (e.g. https://cloud.example.com)",
++  username: "Nextcloud Username",
++  app_password: "Nextcloud App Password",
++
+   // R2
+   account_id: "R2 Account ID",
+   r2_access_key_id: "R2 Access Key ID",
+diff --git a/web/src/lib/connectors/types/credentialJson.ts b/web/src/lib/connectors/types/credentialJson.ts
+index 1b89253..cd26b57 100644
+--- a/web/src/lib/connectors/types/credentialJson.ts
++++ b/web/src/lib/connectors/types/credentialJson.ts
+@@ -149,6 +149,12 @@ export interface DropboxCredentialJson {
+   dropbox_access_token: string;
+ }
+ 
++export interface NextcloudCredentialJson {
++  server_url: string;
++  username: string;
++  app_password: string;
++}
++
+ export interface R2CredentialJson {
+   account_id: string;
+   r2_access_key_id: string;
+diff --git a/web/src/lib/sources.ts b/web/src/lib/sources.ts
+index 1216dcb..251e4f8 100644
+--- a/web/src/lib/sources.ts
++++ b/web/src/lib/sources.ts
+@@ -4,6 +4,7 @@ import {
+   GoogleStorageIcon,
+   BraintrustIcon,
+   BoxIcon,
++  NextcloudIcon,
+ } from "@/components/icons/icons";
+ import { ValidSources } from "@/lib/types";
+ import { SourceCategory, SourceMetadata } from "@/lib/search/types";
+@@ -229,6 +230,11 @@ export const SOURCE_METADATA_MAP: SourceMap = {
+     category: SourceCategory.Storage,
+     docs: `${DOCS_ADMINS_PATH}/connectors/official/dropbox`,
+   },
++  nextcloud: {
++    icon: NextcloudIcon,
++    displayName: "Nextcloud",
++    category: SourceCategory.Storage,
++  },
+   s3: {
+     icon: S3Icon,
+     displayName: "S3",
+diff --git a/web/src/lib/types.ts b/web/src/lib/types.ts
+index 8a295c4..1be20ef 100644
+--- a/web/src/lib/types.ts
++++ b/web/src/lib/types.ts
+@@ -658,6 +658,7 @@ export enum ValidSources {
+   TestRail = "testrail",
+   Braintrust = "braintrust",
+   Lumapps = "lumapps",
++  Nextcloud = "nextcloud",
+   Canvas = "canvas",
+   Zoom = "zoom",
+ 
