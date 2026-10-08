@@ -67,9 +67,20 @@ ONYX_BACKEND_IMAGE=onyx-nextcloud-backend:v4.9.0
 ONYX_WEB_SERVER_IMAGE=onyx-nextcloud-web:v4.9.0
 ```
 
-then `docker compose -d up` in that directory recreates `api_server`,
+then `docker compose up -d` in that directory recreates `api_server`,
 `background` and `web_server`. `nginx`, the model servers and all data
 containers stay untouched.
+
+**Always restart nginx afterwards:**
+
+```sh
+docker restart onyx-nginx-1
+```
+
+`nginx` resolves `proxy_pass http://api_server` once at startup, and recreating
+the backend containers gives them new IPs. Without the restart every `/api/*`
+request returns `502 Bad Gateway` (HTML), which the UI surfaces as
+"backend is currently unavailable" / `JSON.parse: unexpected character`.
 
 ## Rollback
 
