@@ -100,14 +100,25 @@ request returns `502 Bad Gateway` (HTML), which the UI surfaces as
 
 The host's `mcp-server-notmuch` speaks stdio, while Onyx accepts network MCP
 transports. `notmuch-mcp.Dockerfile` packages the upstream read-only server
-with Supergateway as Streamable HTTP. The Compose service has **no published
-port** and runs on an internal Docker network shared only with `api_server`.
-The mail database and config are mounted read-only; no `--allow-drafts`,
-`--allow-tags` or `--allow-export` flags are passed.
+with Supergateway as Streamable HTTP. A separate Nginx proxy requires a Bearer
+key before forwarding requests. Both containers run on isolated internal
+Docker networks; no MCP port is published to the host/LAN. The mail database
+and config are mounted read-only, and no draft/tag/export flags are passed.
 
-For a local deployment, add a `notmuch-mcp` service to the deployment's
-`docker-compose.override.yml` and attach `api_server` to the same external
-internal network:
+### Onyx access-control note
+
+Onyx v4.9 Community does **not** allow per-user/group MCP server ACLs: its UI
+hides the selector outside Business tier, and the backend rejects
+`is_public=false` without Enterprise. The server therefore remains visible in
+the Actions list, but the gateway enforces both a shared Bearer key and the
+authenticated caller's email. Only the email in `NOTMUCH_MCP_ALLOWED_EMAIL`
+can invoke mail tools; other Onyx users receive HTTP 401. Enterprise users
+should additionally make the MCP server private and assign it to one user/group.
+
+### Deployment shape
+
+Add these services/networks to the deployment's `docker-compose.override.yml`
+(merge them with existing overrides):
 
 ```yaml
 services:
@@ -124,45 +135,69 @@ services:
       - ${HOME}/.config/mcp-server-notmuch/config.toml:${HOME}/.config/mcp-server-notmuch/config.toml:ro
       - ${HOME}/.config/notmuch/config:${HOME}/.notmuch-config:ro
       - ${HOME}/.local/share/mail:${HOME}/.local/share/mail:ro
+    networks: [notmuch-backend]
+  notmuch-mcp-auth:
+    image: nginx:alpine
+    env_file: /path/to/private/notmuch-mcp.env
+    environment:
+      NGINX_ENVSUBST_FILTER: '^NOTMUCH_MCP_API_KEY$'
+    volumes:
+      - /path/to/onyx-nextcloud-connector/onyx-patch/notmuch-mcp-auth.conf.template:/etc/nginx/templates/default.conf.template:ro
     networks:
+      notmuch-backend: {}
       notmuch-mcp:
         aliases: [notmuch-mcp.local]
+
 networks:
+  notmuch-backend:
+    external: true
+    name: onyx-notmuch-backend
   notmuch-mcp:
     external: true
     name: onyx-notmuch-mcp
 ```
 
-Create the isolated network once (choose a private subnet that does not
-overlap the host LAN or existing Docker networks), then start the service:
+Create two **internal** Docker networks on unused private subnets, and a mode-600
+env file containing a random gateway key and the one permitted Onyx identity
+(never commit it):
 
 ```sh
-docker network create --internal --subnet 10.254.250.0/24 onyx-notmuch-mcp
-docker compose up -d api_server notmuch-mcp
+docker network create --internal --subnet <unused-subnet-a> onyx-notmuch-backend
+docker network create --internal --subnet <unused-subnet-b> onyx-notmuch-mcp
+install -m 600 /dev/null /path/to/private/notmuch-mcp.env
+printf 'NOTMUCH_MCP_API_KEY=%s\nNOTMUCH_MCP_ALLOWED_EMAIL=%s\n' \
+  "$(openssl rand -hex 32)" "you@example.com" >> /path/to/private/notmuch-mcp.env
+docker compose up -d api_server notmuch-mcp notmuch-mcp-auth
 ```
 
-Onyx v4.9 defaults to blocking private outbound MCP URLs. To let its API server
-reach this RFC1918-only network, set `MCP_SERVER_ALLOW_PRIVATE_NETWORK=true`
-in the deployment `.env` (or Admin Panel → Organization → Security & Hardening
-→ SSRF Protection → Allow Private Network) and recreate `api_server`. This
-allows admin-configured MCP/OAuth connections to reach RFC1918 addresses, but
-still blocks loopback and cloud metadata endpoints. Keep this bridge on the
-isolated network; do not publish port 8765 to the host/LAN.
+Onyx v4.9 defaults to blocking private outbound MCP URLs. Set
+`MCP_SERVER_ALLOW_PRIVATE_NETWORK=true` in the deployment `.env` (or Admin
+Panel → Organization → Security & Hardening → SSRF Protection → Allow Private
+Network) and recreate `api_server`. This lets admin-configured MCP/OAuth
+endpoints reach RFC1918 addresses; loopback and cloud metadata remain blocked.
 
-Then in **Admin Panel → MCP Actions → Add MCP Server** (use the dotted alias;
-the Onyx form's URL validator rejects the bare Docker service name):
+### Register in Onyx
+
+In **Admin Panel → MCP Actions → Add MCP Server** (the dotted alias is required
+because the form's URL validator rejects single-label Docker hostnames):
 
 - URL: `http://notmuch-mcp.local:8765/mcp`
-- Authentication: **No Auth** (the endpoint has no host/LAN port and is only
-  reachable from `api_server` on the dedicated internal network)
-- Visibility: **private**, assigned only to your user/group; do not make mail
-  tools public to other Onyx users
-- Connect, then enable only the read tools you need. Draft, tag and export tools
-  are not registered by this server.
+- Authentication: **API Key → Admin/Shared**. Keep the Bearer header
+  `Authorization: Bearer {api_key}` and store the gateway key in the server's
+  private admin config.
+- Add header `X-Notmuch-User: {user_email}`. Onyx substitutes the authenticated
+  caller's email; the gateway allows only `NOTMUCH_MCP_ALLOWED_EMAIL` and returns
+  401 for other users. Do **not** choose No Auth or omit the identity header.
+- Community edition keeps the server listing public, but the proxy's identity
+  gate prevents other listed users from reading mail. Enterprise can additionally
+  make the server private via its user/group ACL.
+- Select the read tools you need. Draft, tagging, and export tools are not
+  registered by the sidecar.
 
-The wrapper was verified from the Onyx API container: Streamable HTTP
-initialization succeeds and it lists the notmuch read-tier tools without
-fetching or printing any email content.
+The gateway was verified from the Onyx API container: missing/wrong bearer or
+caller-email headers receive HTTP 401; the allowed pair reaches the read-only
+server and lists 13 tools. A non-content `mail_count` probe is supported. No
+email body is read during verification.
 
 ## Rollback
 
