@@ -124,7 +124,9 @@ services:
       - ${HOME}/.config/mcp-server-notmuch/config.toml:${HOME}/.config/mcp-server-notmuch/config.toml:ro
       - ${HOME}/.config/notmuch/config:${HOME}/.notmuch-config:ro
       - ${HOME}/.local/share/mail:${HOME}/.local/share/mail:ro
-    networks: [notmuch-mcp]
+    networks:
+      notmuch-mcp:
+        aliases: [notmuch-mcp.local]
 networks:
   notmuch-mcp:
     external: true
@@ -147,9 +149,10 @@ allows admin-configured MCP/OAuth connections to reach RFC1918 addresses, but
 still blocks loopback and cloud metadata endpoints. Keep this bridge on the
 isolated network; do not publish port 8765 to the host/LAN.
 
-Then in **Admin Panel → MCP Actions → Add MCP Server**:
+Then in **Admin Panel → MCP Actions → Add MCP Server** (use the dotted alias;
+the Onyx form's URL validator rejects the bare Docker service name):
 
-- URL: `http://notmuch-mcp:8765/mcp`
+- URL: `http://notmuch-mcp.local:8765/mcp`
 - Authentication: **No Auth** (the endpoint has no host/LAN port and is only
   reachable from `api_server` on the dedicated internal network)
 - Visibility: **private**, assigned only to your user/group; do not make mail
