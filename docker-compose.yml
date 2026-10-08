@@ -1,0 +1,14 @@
+services:
+  bridge:
+    build: .
+    image: onyx-nextcloud-connector:latest
+    env_file: .env
+    environment:
+      STATE_PATH: /data/state.db
+    volumes:
+      - bridge-data:/data
+    restart: unless-stopped
+    command: ["sync", "--daemon"]
+
+volumes:
+  bridge-data:

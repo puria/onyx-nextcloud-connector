@@ -59,6 +59,7 @@ google-service-account*.json
 credentials.json
 
 # Dependency directories
+.venv/
 node_modules/
 vendor/
 bower_components/
